@@ -1,0 +1,120 @@
+# RAG應用程式架構規劃 (使用OpenAI)
+
+=== 系統架構 ===
+1. 前後端分離設計
+2. 前端：現代Web框架 (React/Vue/Angular)
+3. 後端：Python FastAPI
+4. 資料流程：
+   用戶輸入 -> 前端 -> 後端API -> RAG處理 -> OpenAI API -> 返回結果
+
+=== 前端規劃 ===
+1. 主要元件：
+   - 聊天介面
+   - 訊息歷史顯示區
+   - 文件上傳區
+   - 即時回應串流顯示
+
+2. 必要功能：
+   - 即時對話互動
+   - Markdown格式支援
+   - 文件預覽功能
+   - 對話歷史管理
+
+3. API對接：
+   - POST /api/chat (處理對話)
+   - POST /api/upload (文件上傳)
+   - GET /api/history (取得歷史紀錄)
+
+=== 後端規劃 ===
+1. 主要模組：
+   - RAG處理引擎
+   - OpenAI API對接層
+   - 文件管理系統
+   - 對話歷史管理
+
+2. API端點設計：
+   - /chat (POST) 處理自然語言查詢
+     Request: {query: string, history: array}
+     Response: {answer: string, sources: array}
+
+   - /upload (POST) 處理文件上傳
+     Request: 多部分文件上傳
+     Response: 上傳狀態與元數據
+
+   - /history (GET) 取得對話歷史
+     Response: 結構化歷史數據
+
+3. 資料儲存：
+   - 暫存文件儲存 (文件系統/S3)
+   - 向量資料庫 (暫存方案可用Chroma/Pinecone)
+   - 對話歷史暫存 (Redis/SQLite)
+
+=== RAG處理流程 ===
+1. 檢索階段：
+   - 文字嵌入 (text-embedding-ada-002)
+   - 向量相似度搜索
+   - 上下文篩選與排序
+
+2. 生成階段：
+   - 使用gpt-3.5-turbo或gpt-4
+   - 提示工程設計：
+     - 系統角色設定
+     - 檢索上下文整合
+     - 安全過濾層
+
+3. 文件處理流程：
+   - 文件解析 (PDF/Word/TXT)
+   - 文字分塊處理
+   - 元數據提取
+   - 向量化儲存
+
+=== 必要工具/套件 ===
+1. 後端：
+   - LangChain
+   - OpenAI Python SDK
+   - FastAPI
+   - Unstructured (文件解析)
+   - ChromaDB (本地向量庫)
+
+2. 前端：
+   - OpenAI API SDK
+   - 文件上傳元件
+   - Markdown渲染器
+   - 狀態管理工具
+
+3. 開發環境：
+   - Python 3.10+
+   - Node.js 18+
+   - Docker (選配)
+
+=== 安全規劃 ===
+1. API金鑰管理
+2. 輸入內容過濾
+3. 速率限制
+4. CORS設定
+5. 敏感數據遮蔽
+
+=== 擴展性設計 ===
+1. 模組化RAG組件
+2. 可替換的向量資料庫
+3. 多模型支援架構
+4. 日誌與監控系統
+5. 快取機制
+
+=== 附註 ===
+1. 需準備環境變數：
+   - OPENAI_API_KEY
+   - EMBEDDING_MODEL_NAME
+   - CHAT_MODEL_NAME
+
+2. 可擴展功能：
+   - 多租戶支援
+   - 混合檢索策略
+   - 檢索結果評分機制
+   - 用戶反饋系統
+
+3. 效能優化點：
+   - 非同步處理
+   - 批次嵌入計算
+   - 預檢索快取
+   - 串流回應支援 
